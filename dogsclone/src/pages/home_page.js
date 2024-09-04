@@ -57,7 +57,21 @@ const HomePage = ({telegramId,username_curently}) => {
 
         loadData();
     }, []); // Ensure the effect runs only once
-
+    const handleConnectWallet = () => {
+        // Здесь ваша логика для открытия меню кошелька
+        if (window.Telegram && window.Telegram.WebApp) {
+            // Проверка доступности API Telegram WebApp
+            const app = window.Telegram.WebApp;
+            if (app) {
+                // В зависимости от API Telegram, возможно вам нужно будет открыть ссылку или вызвать метод
+                app.showPopup('https://example.com/connect-wallet'); // Замените URL на URL вашего кошелька
+            } else {
+                alert('Telegram WebApp API не доступен.');
+            }
+        } else {
+            alert('Telegram WebApp API не доступен.');
+        }
+    };
     useEffect(() => {
         if (animated) {
             setAnimated(true)
@@ -108,6 +122,7 @@ const HomePage = ({telegramId,username_curently}) => {
                                 className="_symbol_eubs4_9">DOGS</span>
                         </div>
                     </div>
+                    <div className="_root_oar9p_1 _type-white_oar9p_43" onClick={handleConnectWallet}>Claim rewards (coming soon)</div>
                     <div className="_socialCarousel_1xku1_1">
                         <div className="swiper swiper-initialized swiper-horizontal swiper-backface-hidden">
                             <div className="swiper-wrapper">
@@ -154,7 +169,8 @@ const HomePage = ({telegramId,username_curently}) => {
                     </div>
                     <div className="_rewardList_1a8v0_1">
                         <div className="_title_1a8v0_5">Your rewards</div>
-                        {rewards.age !=null && rewards.age !== 0 &&  <RewardItem text="Account age" details={rewards.age.toString()}/>}
+                        {rewards.age != null && rewards.age !== 0 &&
+                            <RewardItem text="Account age" details={rewards.age.toString()}/>}
                         {rewards.boost !== 0 && <RewardItem text="Boosts reward" details={rewards.boost}/>}
                         {rewards.game !== 0 && <RewardItem text="Game reward" details={rewards.game}/>}
                         {rewards.daily !== 0 && <RewardItem text="Daily reward" details={rewards.daily}/>}

@@ -28,7 +28,7 @@ const UserBoard = ({telegramId}) => {
                 </div>
                 <div className="_body_iud9y_25">
                     <div className="_text_iud9y_47">{user?.username}</div>
-                    <div className="_footer_iud9y_32">{user?.balance} OGs</div>
+                    <div className="_footer_iud9y_32">{user?.balance} Pandos</div>
                 </div>
                 <div className="_details_iud9y_56">#{userStats.position}</div>
             </div>

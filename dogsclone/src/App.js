@@ -15,10 +15,12 @@ import { RewardsProvider } from './context/RewardsContext';
 import { LeaderboardProvider } from "./context/LeaderboardContext";
 import axios from 'axios';
 import { API_BASE_URL } from './helpers/api';
-
+import {TonConnectUIProvider} from "@tonconnect/ui-react";
 export const ModalContext = createContext();
 export const IsRegisteredContext = createContext();
-
+const tonConnectUI = {
+  manifestUrl: 'http://127.0.0.1:8000/static/tonconnect/manifest.json'
+};
 function App() {
   const [userData, setUserData] = useState(null);
   const location = useLocation();
@@ -26,7 +28,7 @@ function App() {
   const showBottomNavbar = location.pathname !== '/welcome' && location.pathname !== '/second' && location.pathname !== '/last_check' && location.pathname !== '/preload';
   const { showModal, modalMessage, setShowModal } = useContext(ModalContext);
   const [isMobile, setIsMobile] = useState(true);
-
+  const [reg_date, setRegDate] = useState(null);
   useEffect(() => {
     const checkIfMobile = () => {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -169,26 +171,7 @@ function App() {
   }, []);
 
   const sendAccountCreationDate = async (userId, date) => {
-    try {
-      const formattedDate = date.split('T')[0]; // Format date to "YYYY-MM-DD"
-
-      const response = await axios.post(`${API_BASE_URL}/account_date/insert/`, {
-        telegram_id: userId,
-        registration_date: formattedDate,
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (response.status === 201) {
-        console.log("Account creation date inserted successfully:", response.data.message);
-      } else {
-        console.error("Failed to insert account creation date:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error sending account creation date:", error);
-    }
+    setRegDate(date);
   };
 
 
@@ -228,7 +211,7 @@ function App() {
           <Routes>
             <Route path="/preload" element={<PreLoad telegramId={userData.id} />} />
             <Route path="/welcome" element={<WelcomePage />} />
-            <Route path="/second" element={<SecondPage userData={userData} />} />
+            <Route path="/second" element={<SecondPage userData={userData} reg_date={reg_date}/>} />
             <Route path="/last_check" element={<LastPage telegramId={userData.id}/>} />
             <Route path="/home" element={<HomePage telegramId={userData.id} username_curently={userData.first_name}/>} />
             <Route path="/leaderboard" element={<LeaderboardPage telegramId={userData.id}/>} />
@@ -245,8 +228,9 @@ function AppWrapper() {
   const [isRegistered, setIsRegistered] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
-
+  const manifestUrl = '38.180.134.60:8000/static/tonconnect/manifest.json';
   return (
+      <TonConnectUIProvider manifestUrl={manifestUrl}>
       <IsRegisteredContext.Provider value={{ isRegistered, setIsRegistered }}>
         <ModalContext.Provider value={{ showModal, setShowModal, modalMessage, setModalMessage }}>
           <LeaderboardProvider>
@@ -260,6 +244,7 @@ function AppWrapper() {
           </LeaderboardProvider>
         </ModalContext.Provider>
       </IsRegisteredContext.Provider>
+        </TonConnectUIProvider>
   );
 }
 

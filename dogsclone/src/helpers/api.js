@@ -4,7 +4,7 @@ import { RewardsContext } from "../context/RewardsContext";
 import { TasksContext } from "../context/TasksContext";
 import { LeaderboardContext } from "../context/LeaderboardContext";
 
-export const API_BASE_URL = ' https://primegame3.online/api';
+export const API_BASE_URL = 'http://38.180.134.60:8000/api';
 export const telegram_id = "874423521"
 export const updateUserBalance = async (telegramId, newBalance) => {
     try {

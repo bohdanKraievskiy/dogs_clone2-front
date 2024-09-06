@@ -78,7 +78,7 @@ const LastPage = ({telegramId}) => {
                     ) : state === "amazing" ? (
                         <>
                             <div className="_title_mgd6s_24 _exclusive_font" style={{fontSize:"13vw"}}>YOU’RE AMAZING</div>
-                            <div className="_subTitle_mgd6s_34">Here is your DOGS reward</div>
+                            <div className="_subTitle_mgd6s_34">Here is your Pando reward</div>
                             <div className="_valueWrap_mgd6s_42">
                                 <div className="_value_mgd6s_42">
                                     <img
@@ -91,12 +91,12 @@ const LastPage = ({telegramId}) => {
                                          className={`_balance_eubs4_1 balance-text _exclusive_font `}>
                                         <span style={{fontSize: "12vw", color: "white"}}>{user?.age} </span>
                                         &nbsp;
-                                        <span style={{fontSize: "12vw"}}> DOGS</span>
+                                        <span style={{fontSize: "12vw"}}> Pando</span>
                                     </div>
                                 </div>
                             </div>
                             <div className="_valueSubTitle_mgd6s_86">
-                                Welcome to the OGs movement 🤝
+                                Welcome to the Pando movement 🤝
                             </div>
                         </>
                     ) : state === "premium" && user.is_premium ? (

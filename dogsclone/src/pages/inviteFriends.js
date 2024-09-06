@@ -64,7 +64,7 @@ const InvitePage = ({ telegramId }) => {
                 </div>
                 <div className="_body_iud9y_25">
                     <div className="_text_iud9y_47">{friend.username}</div>
-                    <div className="_footer_iud9y_32">{friend.score} $WAP</div>
+                    <div className="_footer_iud9y_32">{friend.score} Pandos</div>
                 </div>
 
             </div>
@@ -97,7 +97,7 @@ const InvitePage = ({ telegramId }) => {
                             <div
                                 style={{color: "white"}}>+ {(friend?.friend_bonus ?? 0) + (friend?.balance_increment ?? 0)}</div>
                             &nbsp;
-                            <div style={{color: "#F7C605"}}> $WAP</div>
+                            <div style={{color: "#F7C605"}}> Pando</div>
                         </div>
 
                         <div className="_footer_iud9y_32">{formattedDate}</div>
@@ -140,7 +140,7 @@ const InvitePage = ({ telegramId }) => {
                             )}
                         </div>
                     </div>
-                    <div className="_title_1x19s_5">Invite friends<br/> and get more dogs</div>
+                    <div className="_title_1x19s_5">Invite friends<br/> and get more Pando</div>
                     <div className="_mascote_94k9d_1 _centered_94k9d_13">
                         <img
                             id="home-mascote"

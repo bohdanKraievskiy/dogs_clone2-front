@@ -12,32 +12,36 @@ import 'swiper/css';
 import 'swiper/css/bundle';
 import SwiperCore from 'swiper';
 import { Pagination } from 'swiper/modules';
+import { TonConnectUI, TonConnectButton } from '@tonconnect/ui-react';
 SwiperCore.use([Pagination]);
+
 const HomePage = ({telegramId,username_curently}) => {
+    const [walletInfo, setWalletInfo] = useState(null);
     const navigate = useNavigate();
     const { user,fetchUser,updateUserBalance} = useContext(UserContext);
     const { rewards,fetchUserRewards } = useContext(RewardsContext);
     const {tasks,fetchTasks} = useContext(TasksContext);
-
-    const userFetchedRef = useRef(false);
+    const [isLoading, setIsLoading] = useState(false);
     const rewardsFetchedRef = useRef(false);
     const tasksFetchedRef = useRef(false);
-
+    const handleGoToScoreTON = () => {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        setIsLoading(true);
+    };
     const handleGoToScore = () => {
         window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         navigate("/last_check");
     };
+
+    const handleClose = () => {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        setIsLoading(false);
+    };
     const [animated, setAnimated] = useState(false);
     useEffect(() => {
         const loadData = async () => {
-            // Check if user data is already fetched
-            if (!userFetchedRef.current) {
-                await fetchUser(telegramId);
-                userFetchedRef.current = true;
-            }
 
-            // Check if rewards data is already fetched
-            if (!rewardsFetchedRef.current) {
+            if (!rewardsFetchedRef.current || !tasks) {
                 if (!rewards || Object.keys(rewards).length === 0) {
                     navigate("/preload");
                 } else {
@@ -45,8 +49,7 @@ const HomePage = ({telegramId,username_curently}) => {
                 }
             }
 
-            // Check if tasks data is already fetched
-            if (!tasksFetchedRef.current) {
+            if (!tasksFetchedRef.current || !rewards) {
                 if (!tasks || tasks.length === 0) {
                     navigate("/preload");
                 } else {
@@ -56,21 +59,9 @@ const HomePage = ({telegramId,username_curently}) => {
         };
 
         loadData();
-    }, []); // Ensure the effect runs only once
+    }, []);
+
     const handleConnectWallet = () => {
-        // Здесь ваша логика для открытия меню кошелька
-        if (window.Telegram && window.Telegram.WebApp) {
-            // Проверка доступности API Telegram WebApp
-            const app = window.Telegram.WebApp;
-            if (app) {
-                // В зависимости от API Telegram, возможно вам нужно будет открыть ссылку или вызвать метод
-                app.showPopup('https://example.com/connect-wallet'); // Замените URL на URL вашего кошелька
-            } else {
-                alert('Telegram WebApp API не доступен.');
-            }
-        } else {
-            alert('Telegram WebApp API не доступен.');
-        }
     };
     useEffect(() => {
         if (animated) {
@@ -87,7 +78,8 @@ const HomePage = ({telegramId,username_curently}) => {
     return (
         <div class="_page_1ulsb_1" style={{zIndex:100000}}>
             <div className="_gameView_1cr97_1" id="game-view">
-                <div className="_backdrop_wo9zh_1"></div>
+                <div className={`_backdrop_wo9zh_1 `}></div>
+
                 <div className="_replay_1vo1r_24" onClick={handleGoToScore}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="56" viewBox="0 0 390 56" fill="none">
                         <path
@@ -113,16 +105,26 @@ const HomePage = ({telegramId,username_curently}) => {
 
                         </img>
                     </div>
+
                     <div className="_title_1vo1r_5">
                         <div style={{flexDirection: "row "}}
                              className={`_balance_eubs4_1 balance-text  ${animated ? 'balance-animated' : ''}`}>
                             <span style={{fontSize: "6vw", color: "white"}}>{user?.balance} </span>
                             &nbsp;
                             <span
-                                className="_symbol_eubs4_9">DOGS</span>
+                                className="_symbol_eubs4_9">Pando
+                            </span>
                         </div>
                     </div>
-                    <div className="_root_oar9p_1 _type-white_oar9p_43" onClick={handleConnectWallet}>Claim rewards (coming soon)</div>
+                    <div style={{display: "flex", justifyContent: "center", justifyItems: "center"}}>
+                        <TonConnectButton/>
+                        {walletInfo && (
+                            <div>
+                                <p><strong>Wallet connected:</strong> {walletInfo.account.address}</p>
+                                <p><strong>Balance:</strong> {walletInfo.account.balance} TON</p>
+                            </div>
+                        )}
+                    </div>
                     <div className="_socialCarousel_1xku1_1">
                         <div className="swiper swiper-initialized swiper-horizontal swiper-backface-hidden">
                             <div className="swiper-wrapper">
@@ -136,7 +138,7 @@ const HomePage = ({telegramId,username_curently}) => {
                                             >
                                                 <SwiperSlide>
                                                     <CommunitySlide
-                                                        title="DOGS COMMUNITY"
+                                                        title="Pando COMMUNITY"
                                                         text="Home for Telegram OGs"
                                                         buttonText="Join"
                                                         url="https://t.me/WeArePrimeNews"

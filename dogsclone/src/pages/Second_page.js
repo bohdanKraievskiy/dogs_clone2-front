@@ -1,19 +1,19 @@
 import "../Styles/Second_page.css";
-import React, { useState, useEffect,useRef,useContext  } from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import axios from "axios"; // Импорт axios
-import { useNavigate } from "react-router-dom";
-import { UserContext } from '../context/UserContext';
-import { RewardsContext } from '../context/RewardsContext';
-import { TasksContext } from '../context/TasksContext';
+import {useNavigate} from "react-router-dom";
+import {UserContext} from '../context/UserContext';
+import {RewardsContext} from '../context/RewardsContext';
+import {TasksContext} from '../context/TasksContext';
 import {LeaderboardContext} from "../context/LeaderboardContext";
 import {API_BASE_URL} from "../helpers/api"; // Import TasksContext
-const SecondPage = (userData) => {
+const SecondPage = ({userData, refererId, reg_date}) => {
     const [isCompleted, setIsCompleted] = useState({
         accountAge: false,
         activityLevel: false,
         telegramPremium: false,
     });
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const { setRewards } = useContext(RewardsContext);
     const { tasks, setTasks } = useContext(TasksContext); // Access tasks and setTasks
     const navigate = useNavigate();
@@ -30,19 +30,14 @@ const SecondPage = (userData) => {
     // Функция для создания пользователя
     const createUser = async () => {
         try {
-            console.log(userData.userData)
-            const randomUsername = userData?.userData.username;
-            const randomTelegramId = userData?.userData.id;
-            const isPremium = userData?.userData.is_premium;
+            const randomUsername = userData.username;
+            const randomTelegramId = userData.id;
+            const isPremium = userData.is_premium;
             const reference = `874423521djiawiid`;
+            const registrationResponse = reg_date;
 
-            // Fetch the registration date
-                const registrationResponse = await axios.get(`${API_BASE_URL}/account_date/`,{
-                    params: { telegram_id: randomTelegramId }
-                });
-            if (registrationResponse.status === 200) {
-                const registrationDateStr = registrationResponse.data.account_date.registration_date;
-                const registrationDate = new Date(registrationDateStr);
+            if (registrationResponse === reg_date) {
+                const registrationDate = new Date(reg_date);
                 const currentDate = new Date();
                 const diffTime = Math.abs(currentDate - registrationDate);
                 const randomAge = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
@@ -57,6 +52,7 @@ const SecondPage = (userData) => {
                     balance: randomAge,
                     top_group: topGroup,
                     top_percent: percentage,
+                    wallet:0,
                     attempts_left:5
                 };
                 setUser(userData);
@@ -74,10 +70,17 @@ const SecondPage = (userData) => {
                 setRewards(rewardsData);
 
                 const initialTasks = [
-                    {"title": "Subscribe to PRIME channel", "url": "https://t.me/WeArePrimeNews", "reward": "+1000",
+                    {"title": "Subscribe to PRIME channel", "ton": "0.009", "url": "https://t.me/WeArePrimeNews", "reward": "+1000",
                         "completed": false},
-                    {"title": "Subscribe to PRIME X", "url": "https://x.com/weareprimehome",
-                        "reward": "+1000", "completed": false},
+                    {"title": "Follow the X", "ton": "0.009", "url": "https://x.com/wearewap?s=21&t=REGizFxkKmoHaJ7j2DeBGQ",
+                        "reward": "+3000",
+                        "completed": false},
+                    {"title": "Follow the X Founder", "ton": "0.009", "url": "https://x.com/rafalskovic",
+                        "reward": "+2000",
+                        "completed": false},
+                    {"title": "Follow the X CoFounder", "ton": "0.009",
+                        "url": "https://x.com/thejojohunter?s=21&t=REGizFxkKmoHaJ7j2DeBGQ", "reward": "+2000",
+                        "completed": false},
                     {"title": "Invite 5 premium friends", "url": "", "reward": "+5000", "completed": false,
                     },
                     {"title": "Invite 10 premium friends", "url": "", "reward": "+10000", "completed": false,
@@ -85,7 +88,25 @@ const SecondPage = (userData) => {
                     {"title": "Invite 2 friends", "url": "", "reward": "+2000", "completed": false,
                     },
                     {"title": "Add 🐵 in Telegram name", "url": "",
-                        "reward": "+1000", "completed": false}
+                        "reward": "+1000", "completed": false},
+                    {"title": "Invite 1 premium friends", "ton": "0.01", "url": "", "reward": "+2000", "completed": false,
+                    },
+                    {"title": "Retweet the tweet #1",
+                        "url": "https://x.com/wearewap/status/1830883780342472925?s=46&t=REGizFxkKmoHaJ7j2DeBGQ",
+                        "reward": "+1000",
+                        "completed": false},
+                    {"title": "Retweet the tweet #2",
+                        "url": "https://x.com/wearewap/status/1831091070534570186?s=46&t=REGizFxkKmoHaJ7j2DeBGQ",
+                        "reward": "+1000",
+                        "completed": false},
+                    {"title": "Retweet the tweet #3",
+                        "url": "https://x.com/wearewap/status/1831339517913260035?s=46&t=REGizFxkKmoHaJ7j2DeBGQ",
+                        "reward": "+1000",
+                        "completed": false},
+                    {"title": "Retweet the tweet #4",
+                        "url": "https://x.com/wearewap/status/1831354181111656498?s=46&t=REGizFxkKmoHaJ7j2DeBGQ",
+                        "reward": "+1000",
+                        "completed": false},
                 ];
 
                 // Update tasks context
@@ -100,9 +121,16 @@ const SecondPage = (userData) => {
                         }
                     }
                 );
+
+
                 if (response.status === 201) {
                     console.log("User created successfully:", response.data);
                     setIsCompleted((prev) => ({ ...prev, activityLevel: true }))
+                    console.log(refererId)
+                    console.log(userData.telegram_id)
+                    if(refererId) {
+                        await addFriend(userData.telegram_id, refererId);
+                    }
                     window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
                 } else {
                     console.error("Failed to create user:", response.data);
@@ -112,6 +140,28 @@ const SecondPage = (userData) => {
             }
         } catch (error) {
             console.error("Error creating user:", error);
+        }
+    };
+
+    const addFriend = async (userid, refererId) => {
+        try {
+            console.log(`Adding friend with telegramId: ${userid}, refererId: ${refererId}`);
+            const response = await axios.post(`${API_BASE_URL}/add_friend/`, {
+                telegram_id: userid,
+                second_telegram_id: refererId,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.status === 200) {
+                console.log("Friend added successfully:", response.data.message);
+            } else {
+                console.error("Failed to add friend:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error adding friend:", error);
         }
     };
 
@@ -137,7 +187,7 @@ const SecondPage = (userData) => {
         if (isFirstRender.current) {
             createUser();
             setTimeout(1000)
-            fetchLeaderboard(userData?.userData.id);
+            fetchLeaderboard(userData.id);
             isFirstRender.current = false;
 
         }
@@ -168,12 +218,12 @@ const SecondPage = (userData) => {
     };
     return (
         <div className="_view_sf2n5_1 _view_jzemx_1" style={{opacity: 1}}>
-            <div className="_title_jzemx_9 _exclusive_font" style={{fontSize:"12vw",placeContent:"center",placeItems:"center"}}>CHECKING YOU ACCOUNT</div>
+            <div className="_title_jzemx_9 _exclusive_font" style={{fontSize:"8vw",placeContent:"center",placeItems:"center"}}>Checking you Telegram Activity</div>
             <div className="_loaders_jzemx_15">
                 <div style={{opacity: 1, transform: "none"}}>
                     <div>
                         <div className="_top_jzemx_39">
-                            <div className="_name_jzemx_33">Account Age Verified</div>
+                            <div className="_name_jzemx_33">Age of your account… </div>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -206,7 +256,7 @@ const SecondPage = (userData) => {
                 <div style={{opacity: 1, transform: "none"}}>
                     <div>
                         <div className="_top_jzemx_39">
-                            <div className="_name_jzemx_33">Activity Level Analyzed</div>
+                            <div className="_name_jzemx_33">Activity level…</div>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -239,7 +289,7 @@ const SecondPage = (userData) => {
                 <div style={{opacity: 1, transform: "none"}}>
                     <div>
                         <div className="_top_jzemx_39">
-                            <div className="_name_jzemx_33">Telegram Premium Checked</div>
+                            <div className="_name_jzemx_33">Telegram Premium…</div>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"

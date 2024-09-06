@@ -155,7 +155,7 @@ const RewardPage = ({rewardData}) => {
                         <div className="_valueTitle_mgd6s_78">daily  streak</div>
                     </div>
                     <div className="_valueSubTitle_mgd6s_86">
-                        +{reward} WAP.<br/>
+                        +{reward} Pandos.<br/>
                     </div>
 
 
